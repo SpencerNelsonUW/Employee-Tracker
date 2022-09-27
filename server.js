@@ -31,7 +31,7 @@ const mainMenu = () => {
     inquirer.prompt([
         {
         type: 'list',
-        name: 'main menu',
+        name: 'mainMenu',
         message: 'select your next action',
         choices: [
             'view all departments',
@@ -39,12 +39,75 @@ const mainMenu = () => {
             'view all employees',
             'add a department',
             'add a role',
-            'add an amployee',
+            'add a employee',
             'update an employee role'
         ]
     }
-    ]);
+    ])
+    .then((choice) => {
+        switch(choice.mainMenu) {
+            case 'view all departments':
+            viewDepartments() //REMEMBER TO MAKE THE FUNCTION
+            break;
+
+            case 'view all roles':
+            viewAllRoles()
+            break;
+
+            case 'view all employees':
+            viewAllEmployees()
+            break;
+
+            case 'add a department':
+            addADepartment()
+            break;
+
+            case 'add a role':
+            addARole()
+            break;
+
+            case 'add an employee':
+            addAEmployee()
+            break;
+
+            case 'update an employee role':
+            updateEmployeeRole()
+            break;
+        }
+         
+    })
+
 };
+
+function viewDepartments(){
+    console.log('viewing departments')
+};
+
+function viewAllRoles(){
+    console.log('viewing all roles')
+};
+
+function viewAllEmployees(){
+    console.log('viewing all employees')
+};
+
+function addADepartment(){
+    console.log('adding a department')
+};
+
+function addARole(){
+    console.log('adding a role')
+};
+
+function addAEmployee(){
+    console.log('adding a employee')
+};
+
+function updateEmployeeRole(){
+    console.log('updating an employee role')
+};
+
+
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
