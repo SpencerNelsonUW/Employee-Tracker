@@ -169,7 +169,7 @@ function addARole(){
                 console.log(`you have added ${response.newRole} to roles`)
                 mainMenu();
             }   
-        })
+            })
         });
     })
 };
