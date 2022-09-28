@@ -1,19 +1,11 @@
-const express = require('express');
-
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 
 require('dotenv').config()
 
-const PORT = process.env.PORT || 3001;
-const app = express();
-
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
-
 const connection = mysql.createConnection({
     host: 'localhost',
-    user: 'root',
+    user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: 'employee_db'
   },
@@ -80,40 +72,108 @@ const mainMenu = () => {
 function viewDepartments(){
     console.log('viewing departments')
     connection.query('SELECT * FROM departments', function (err, results){
-        console.log(results)
-        if (err) throw err;
-    })
+        console.table(results)
+        mainMenu()
+        if (err){
+            console.log(err);
+        } ;
+    })  
 };
 
 function viewAllRoles(){
     console.log('viewing all roles')
+    connection.query('SELECT * FROM roles', function (err, results){
+        console.table(results)
+        if (err){
+            console.log(err);
+        } ;
+    })
 };
 
 function viewAllEmployees(){
     console.log('viewing all employees')
+    connection.query('SELECT * FROM employees', function (err, results){
+        console.table(results)
+        if (err){
+            console.log(err);
+        };
+    })
 };
-
 
 
 function addADepartment(){
     console.log('adding a department')
-    inquirer.prompt([
-        
-    ]).then((response) => {
-        var sql = `INSERT INTO departments (department_name) VALUES(?)`
-        connection.query(sql, [response.newDepartment], function (err, result){
-        if (err) throw err;
-        console.log('new department added!')
-    })
+    
+    const departmentQuestion = [
+        {
+        type: 'input',
+        name: 'newDepartment',
+        message: 'what would you like the deparment to be called?',
+        }
+    ];
+
+    inquirer.prompt(departmentQuestion)
+        .then((response) => {
+            connection.query("INSERT INTO departments (department_name) VALUES (?)", [response.newDepartment], function (err, result){
+            if (err) {
+                console.log(err);
+            } else {
+                console.log(`you have added ${response.newDepartment} to departments`)
+                mainMenu();
+            }   
+        })
     });
 };
 
 function addARole(){
     console.log('adding a role')
+    const roleQuestion = [
+        {
+        type: 'input',
+        name: 'newRole',
+        message: 'what is the title of the new role?',
+        },
+        {
+        type: 'input',
+        name: 'newRoleSalary',
+        message: 'what is the salary for the new role?',
+        }
+    ];
+
+    inquirer.prompt(roleQuestion)
+        .then((response) => {
+            connection.query("INSERT INTO roles (title) VALUES (?)", [response.newRole], function (err, result){
+            if (err) {
+                console.log(err);
+            } else {
+                console.log(`you have added ${response.newRole} to roles`)
+                mainMenu();
+            }   
+        })
+    });
 };
 
 function addAEmployee(){
     console.log('adding a employee')
+    const employeeQuestion = [
+        {
+        type: 'input',
+        name: 'newEmployee',
+        message: 'what is the name of the new employee?',
+        }
+    ];
+
+    inquirer.prompt(employeeQuestion)
+        .then((response) => {
+            connection.query("INSERT INTO departments (department_name) VALUES (?)", [response.newEmployee], function (err, result){
+            if (err) {
+                console.log(err);
+            } else {
+                console.log(`you have added ${response.newEmployee} to employees`)
+                mainMenu();
+            }   
+        })
+    });
 };
 
 function updateEmployeeRole(){
@@ -122,6 +182,3 @@ function updateEmployeeRole(){
 
 
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });

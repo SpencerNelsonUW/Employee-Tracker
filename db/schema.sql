@@ -6,28 +6,32 @@ USE employee_db;
 
 -- Creates the table "departments" within books_db --
 CREATE TABLE departments (
-    id INT AUTO_INCREMENT,
-    PRIMARY KEY(id),
+    id INT PRIMARY KEY AUTO_INCREMENT,
     department_name VARCHAR(30) NOT NULL
 );
 
--- CREATE TABLE roles (
---     id INT NOT NULL AUTO_INCREMENT,
---     PRIMARY KEY(id),
---     title VARCHAR(30) NOT NULL,
---     salary INT NOT NULL,
---     department_id INT,
---     FOREIGN KEY(department_id) REFERENCES departments(id),
--- );
+CREATE TABLE roles (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(30) NOT NULL,
+    salary INT NOT NULL,
+    department_id INT,
+    FOREIGN KEY (department_id) 
+    REFERENCES departments(id)
+    ON DELETE SET NULL
+);
 
--- CREATE TABLE employees (
---     id INT NOT NULL AUTO_INCREMENT,
---     PRIMARY KEY(id),
---     title VARCHAR(30) NOT NULL,
---     salary INT NOT NULL,
---     department_id INT,
---     FOREIGN KEY(department_id) REFERENCES departments(id),
---     roles_id INT,
---     FOREIGN KEY(roles_id) REFERENCES roles(id),
--- );
+CREATE TABLE employees (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(30) NOT NULL,
+    first_name VARCHAR(30),
+    last_name VARCHAR(30),
+    department_id INT,
+    roles_id INT,
+    FOREIGN KEY(department_id) 
+    REFERENCES departments(id)
+    ON DELETE SET NULL,
+    FOREIGN KEY(roles_id) 
+    REFERENCES roles(id)
+    ON DELETE SET NULL
+);
 
