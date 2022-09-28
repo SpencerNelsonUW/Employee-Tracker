@@ -127,32 +127,41 @@ function addADepartment(){
     });
 };
 
-const addARole = async () => {
+
+
+
+function addARole(){
     console.log('adding a role')
-
-    const roleQuestion = [
-        {
-        type: 'input',
-        name: 'newRole',
-        message: 'what is the title of the new role?',
-        },
-        {
-        type: 'input',
-        name: 'newRoleSalary',
-        message: 'what is the salary for the new role?',
-        },
-
-    ];
-    console.log("after rolequestions")
-
-    const responses = await inquirer.prompt(roleQuestion)
-        .then((response) => {
-            console.log("inside inquirer")
+    
+    const departmentQuery = 'SELECT * FROM departments';
+    connection.query(departmentQuery, (err, results) =>{
+        if (err) throw err;
+        inquirer.prompt([
+            {
+            type: 'input',
+            name: 'newRole',
+            message: 'what is the title of the new role?',
+            },
+            {
+            type: 'input',
+            name: 'newRoleSalary',
+            message: 'what is the salary for the new role?',
+            },
+            {
+            type: 'list',
+            name: 'newRolesDepartment',
+            message: 'what department is the new role in?',
+                choices: function () {
+                    let departmentChoices = results.map(choice => choice.department_name)
+                    return departmentChoices;
+                },
+            },
+        ]).then((response) => {
             connection.query("INSERT INTO roles SET (?)",
             { 
-                title:  response.newRole,
-                salary: response.newRoleSalary,
-                department_id: response.rolesDepartment
+                // title:  response.newRole,     THIS IS WHATS ERRORING NOW
+                // salary: response.newRoleSalary,
+                // department_id: response.newRolesDepartment
             }, function (err, result) {
             if (err) {
                 console.log(err);
@@ -161,8 +170,15 @@ const addARole = async () => {
                 mainMenu();
             }   
         })
-    });
+        });
+    })
 };
+
+
+
+
+
+
 
 function addAEmployee(){
     console.log('adding a employee')
