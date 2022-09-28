@@ -84,6 +84,7 @@ function viewAllRoles(){
     console.log('viewing all roles')
     connection.query('SELECT * FROM roles', function (err, results){
         console.table(results)
+        mainMenu()
         if (err){
             console.log(err);
         } ;
@@ -94,6 +95,7 @@ function viewAllEmployees(){
     console.log('viewing all employees')
     connection.query('SELECT * FROM employees', function (err, results){
         console.table(results)
+        mainMenu()
         if (err){
             console.log(err);
         };
@@ -108,8 +110,8 @@ function addADepartment(){
         {
         type: 'input',
         name: 'newDepartment',
-        message: 'what would you like the deparment to be called?',
-        }
+        message: 'what would you like the department to be called?',
+        },
     ];
 
     inquirer.prompt(departmentQuestion)
@@ -125,8 +127,9 @@ function addADepartment(){
     });
 };
 
-function addARole(){
+const addARole = async () => {
     console.log('adding a role')
+
     const roleQuestion = [
         {
         type: 'input',
@@ -137,12 +140,20 @@ function addARole(){
         type: 'input',
         name: 'newRoleSalary',
         message: 'what is the salary for the new role?',
-        }
-    ];
+        },
 
-    inquirer.prompt(roleQuestion)
+    ];
+    console.log("after rolequestions")
+
+    const responses = await inquirer.prompt(roleQuestion)
         .then((response) => {
-            connection.query("INSERT INTO roles (title) VALUES (?)", [response.newRole], function (err, result){
+            console.log("inside inquirer")
+            connection.query("INSERT INTO roles SET (?)",
+            { 
+                title:  response.newRole,
+                salary: response.newRoleSalary,
+                department_id: response.rolesDepartment
+            }, function (err, result) {
             if (err) {
                 console.log(err);
             } else {
