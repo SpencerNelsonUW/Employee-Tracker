@@ -11,8 +11,6 @@ const app = express();
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-
-
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -47,7 +45,7 @@ const mainMenu = () => {
     .then((choice) => {
         switch(choice.mainMenu) {
             case 'view all departments':
-            viewDepartments() //REMEMBER TO MAKE THE FUNCTION
+            viewDepartments()
             break;
 
             case 'view all roles':
@@ -81,6 +79,10 @@ const mainMenu = () => {
 
 function viewDepartments(){
     console.log('viewing departments')
+    connection.query('SELECT * FROM departments', function (err, results){
+        console.log(results)
+        if (err) throw err;
+    })
 };
 
 function viewAllRoles(){
@@ -91,8 +93,19 @@ function viewAllEmployees(){
     console.log('viewing all employees')
 };
 
+
+
 function addADepartment(){
     console.log('adding a department')
+    inquirer.prompt([
+        
+    ]).then((response) => {
+        var sql = `INSERT INTO departments (department_name) VALUES(?)`
+        connection.query(sql, [response.newDepartment], function (err, result){
+        if (err) throw err;
+        console.log('new department added!')
+    })
+    });
 };
 
 function addARole(){
