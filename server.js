@@ -133,51 +133,46 @@ function addADepartment(){
 function addARole(){
     console.log('adding a role')
     
-    const departmentQuery = 'SELECT * FROM departments';
+    const departmentQuery = 'SELECT id FROM departments';
     connection.query(departmentQuery, (err, results) =>{
         if (err) throw err;
         inquirer.prompt([
             {
             type: 'input',
-            name: 'newRole',
+            name: 'title',
             message: 'what is the title of the new role?',
             },
             {
             type: 'input',
-            name: 'newRoleSalary',
+            name: 'salary',
             message: 'what is the salary for the new role?',
             },
             {
             type: 'list',
-            name: 'newRolesDepartment',
+            name: 'department',
             message: 'what department is the new role in?',
                 choices: function () {
-                    let departmentChoices = results.map(choice => choice.department_name)
+                    let departmentChoices = results.map(choice => choice.id)
                     return departmentChoices;
                 },
             },
         ]).then((response) => {
-            connection.query("INSERT INTO roles SET (?)",
-            { 
-                // title:  response.newRole,     THIS IS WHATS ERRORING NOW
-                // salary: response.newRoleSalary,
-                // department_id: response.newRolesDepartment
-            }, function (err, result) {
+            connection.query("INSERT INTO roles (title, salary, department_id) VALUES (?)",
+             [[
+                response.title,
+                response.salary,
+                response.department
+            ]], function (err, result) {
             if (err) {
                 console.log(err);
             } else {
-                console.log(`you have added ${response.newRole} to roles`)
+                console.log(`you have added ${response.title} to roles`)
                 mainMenu();
             }   
             })
         });
     })
 };
-
-
-
-
-
 
 
 function addAEmployee(){
