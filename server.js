@@ -135,7 +135,6 @@ function addARole(){
     console.log('adding a role')
     
     const departmentQuery = 'SELECT id FROM departments';
-
     connection.query(departmentQuery, (err, results) =>{
         if (err) throw err;
         inquirer.prompt([
@@ -177,14 +176,13 @@ function addARole(){
 };
 
 
+
 function addAEmployee(){
     console.log('adding a employee')
+    const roleIdQuery = 'SELECT id FROM roles';
 
-    const rolequery = 'SELECT id FROM roles';
-
-    connection.query(rolequery, (err, results) => {
+    connection.query(roleIdQuery, (err, results) => {
         if (err) throw err;
-        console.log("insidequery")
         inquirer.prompt([
             {
                 type: 'input',
@@ -204,6 +202,7 @@ function addAEmployee(){
                 {
                 type: 'list',
                 name: 'roles',
+                message:'choose the role ID for the new employee',
                 choices: function () {
                     let roleChoices = results.map(choice => choice.id)
                     return roleChoices;
@@ -231,6 +230,67 @@ function addAEmployee(){
 
 function updateEmployeeRole(){
     console.log('updating an employee role')
+
+    const employeeQuery = 'SELECT * FROM employees'
+    connection.query(employeeQuery, (err, results) => {
+        if (err) throw err;
+        const employeeIdChoices = function () {
+            let employeeChoices = results.map(choice => choice.id)
+            return employeeChoices;
+            };
+
+        inquirer.prompt([
+                {
+                type: 'list',
+                name: 'roles',
+                message:'choose the employee ID of the employee you would like to update',
+                choices: employeeIdChoices,
+                },
+                {
+                type: 'input',
+                name: 'first_name',
+                message: 'what is the first name of the new employee?',
+                },
+                {
+                type: 'input',
+                name: 'last_name',
+                message: 'what is the last name of the new employee?',
+                },
+                {
+                type: 'input',
+                name: 'manager',
+                message: 'who is the manager for this employee?',
+                },
+                {
+                type: 'list',
+                name: 'roles',
+                message:'choose the employee ID of the employee you would like to update',
+                choices: function (){
+                    connection.query('SELECT id FROM roles', (err, res) => {
+                        if (err) throw err;
+                        let roleChoices = res.map(choice => choice.id)
+                        return roleChoices;
+                        })
+                    },
+                },
+        ]).then((response) => {
+            connection.query("UPDATE employees (first_name, last_name, manager, roles_id) VALUES (?) WHERE ", 
+            [[
+                response.first_name,
+                response.last_name,
+                response.manager,
+                response.roles,
+            
+            ]], function (err, result){
+            if (err) {
+                console.log(err);
+            } else {
+                console.log(`you have added ${response.first_name} to employees`)
+                mainMenu();
+            }   
+            })
+        });
+    });    
 };
 
 
