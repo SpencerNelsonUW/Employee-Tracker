@@ -22,14 +22,11 @@ CREATE TABLE roles (
 
 CREATE TABLE employees (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    title VARCHAR(30) NOT NULL,
     first_name VARCHAR(30),
     last_name VARCHAR(30),
-    department_id INT,
+    manager VARCHAR(30),
+    title VARCHAR(30),
     roles_id INT,
-    FOREIGN KEY(department_id) 
-    REFERENCES departments(id)
-    ON DELETE SET NULL,
     FOREIGN KEY(roles_id) 
     REFERENCES roles(id)
     ON DELETE SET NULL

@@ -56,7 +56,7 @@ const mainMenu = () => {
             addARole()
             break;
 
-            case 'add an employee':
+            case 'add a employee':
             addAEmployee()
             break;
 
@@ -93,7 +93,8 @@ function viewAllRoles(){
 
 function viewAllEmployees(){
     console.log('viewing all employees')
-    connection.query('SELECT * FROM employees', function (err, results){
+
+    connection.query('SELECT * FROM employees LEFT JOIN roles on employees.roles_id = roles.id', function (err, results){
         console.table(results)
         mainMenu()
         if (err){
@@ -134,6 +135,7 @@ function addARole(){
     console.log('adding a role')
     
     const departmentQuery = 'SELECT id FROM departments';
+
     connection.query(departmentQuery, (err, results) =>{
         if (err) throw err;
         inquirer.prompt([
@@ -150,7 +152,7 @@ function addARole(){
             {
             type: 'list',
             name: 'department',
-            message: 'what department is the new role in?',
+            message: 'which deparment number would you like to add this role to?',
                 choices: function () {
                     let departmentChoices = results.map(choice => choice.id)
                     return departmentChoices;
@@ -166,7 +168,7 @@ function addARole(){
             if (err) {
                 console.log(err);
             } else {
-                console.log(`you have added ${response.title} to roles`)
+                console.log(`you have added the ${response.title} role, salary is ${response.salary}, to department number ${response.department}`)
                 mainMenu();
             }   
             })
@@ -177,25 +179,54 @@ function addARole(){
 
 function addAEmployee(){
     console.log('adding a employee')
-    const employeeQuestion = [
-        {
-        type: 'input',
-        name: 'newEmployee',
-        message: 'what is the name of the new employee?',
-        }
-    ];
 
-    inquirer.prompt(employeeQuestion)
-        .then((response) => {
-            connection.query("INSERT INTO departments (department_name) VALUES (?)", [response.newEmployee], function (err, result){
-            if (err) {
-                console.log(err);
-            } else {
-                console.log(`you have added ${response.newEmployee} to employees`)
-                mainMenu();
-            }   
-        })
-    });
+    const rolequery = 'SELECT id FROM roles';
+
+    connection.query(rolequery, (err, results) => {
+        if (err) throw err;
+        console.log("insidequery")
+        inquirer.prompt([
+            {
+                type: 'input',
+                name: 'first_name',
+                message: 'what is the first name of the new employee?',
+                },
+                {
+                type: 'input',
+                name: 'last_name',
+                message: 'what is the last name of the new employee?',
+                },
+                {
+                type: 'input',
+                name: 'manager',
+                message: 'who is the manager for this employee?',
+                },
+                {
+                type: 'list',
+                name: 'roles',
+                choices: function () {
+                    let roleChoices = results.map(choice => choice.id)
+                    return roleChoices;
+                },
+            }
+        ])  .then((response) => {
+                connection.query("INSERT INTO employees (first_name, last_name, manager, roles_id) VALUES (?)", 
+                [[
+                    response.first_name,
+                    response.last_name,
+                    response.manager,
+                    response.roles,
+                
+                ]], function (err, result){
+                if (err) {
+                    console.log(err);
+                } else {
+                    console.log(`you have added ${response.first_name} to employees`)
+                    mainMenu();
+                }   
+                })
+            });
+    })
 };
 
 function updateEmployeeRole(){
