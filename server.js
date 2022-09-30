@@ -228,6 +228,8 @@ function addAEmployee(){
     })
 };
 
+let updatedID =[]
+
 function updateEmployeeRole(){
     console.log('updating an employee role')
 
@@ -245,16 +247,23 @@ function updateEmployeeRole(){
                 name: 'roles',
                 message:'choose the employee ID of the employee you would like to update',
                 choices: employeeIdChoices,
-                },
+                },     
+        ]).then((response) => {
+            updatedID = response;
+
+            const roleIdQuery = 'SELECT id FROM roles';
+            connection.query(roleIdQuery, (err, results) => {
+            if (err) throw err;
+            inquirer.prompt([
                 {
                 type: 'input',
                 name: 'first_name',
-                message: 'what is the first name of the new employee?',
+                message: 'what is the first name of the employee?',
                 },
                 {
                 type: 'input',
                 name: 'last_name',
-                message: 'what is the last name of the new employee?',
+                message: 'what is the last name of the employee?',
                 },
                 {
                 type: 'input',
@@ -264,34 +273,22 @@ function updateEmployeeRole(){
                 {
                 type: 'list',
                 name: 'roles',
-                message:'choose the employee ID of the employee you would like to update',
-                choices: function (){
-                    connection.query('SELECT id FROM roles', (err, res) => {
-                        if (err) throw err;
-                        let roleChoices = res.map(choice => choice.id)
-                        return roleChoices;
-                        })
-                    },
+                message:'choose the role ID for the new employee',
+                choices: function () {
+                    let roleChoices = results.map(choice => choice.id)
+                    return roleChoices;
                 },
-        ]).then((response) => {
-            connection.query("UPDATE employees (first_name, last_name, manager, roles_id) VALUES (?) WHERE ", 
-            [[
-                response.first_name,
-                response.last_name,
-                response.manager,
-                response.roles,
-            
-            ]], function (err, result){
-            if (err) {
-                console.log(err);
-            } else {
-                console.log(`you have added ${response.first_name} to employees`)
-                mainMenu();
-            }   
+            }
+            ]).then((response) => {
+                connection.query("UPDATE employees (first_name, last_name, manager, roles_id) VALUES (?) WHERE ",)
+                
+
+
+
+
+
             })
         });
     });    
-};
-
-
-
+    }
+)};

@@ -32,3 +32,33 @@ CREATE TABLE employees (
     ON DELETE SET NULL
 );
 
+
+
+
+{
+                type: 'input',
+                name: 'first_name',
+                message: 'what is the first name of the new employee?',
+                },
+                {
+                type: 'input',
+                name: 'last_name',
+                message: 'what is the last name of the new employee?',
+                },
+                {
+                type: 'input',
+                name: 'manager',
+                message: 'who is the manager for this employee?',
+                },
+                {
+                type: 'list',
+                name: 'roles',
+                message:'choose the employee ID of the employee you would like to update',
+                choices: function (){
+                    connection.query('SELECT id FROM roles', (err, res) => {
+                        if (err) throw err;
+                        let roleChoices = res.map(choice => choice.id)
+                        return roleChoices;
+                        })
+                    },
+                },
